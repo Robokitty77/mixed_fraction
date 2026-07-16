@@ -2,7 +2,6 @@
 #ifndef FRACTIONS_FRACTION_H
 #define FRACTIONS_FRACTION_H
 
-using namespace std;
 
 #include <string>
 #include <stdexcept>
@@ -15,22 +14,29 @@ public:
 	explicit fraction() : numerator(0), denominator(1), whole(0), isPos(true) {};
 	fraction(const long int num, const long int denom, const long int wh = 0) {
 		if (denom == 0) {
-			throw invalid_argument(to_string(num) + " / " + to_string(denom) +
+			throw std::invalid_argument(std::to_string(num) + " / " + std::to_string(denom) +
 				" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
-		if (wh < 0 || (num < 0 ^ denom < 0)) {
-			this->isPos = false;
+
+		this->isPos = !(wh < 0 || (num < 0 ^ denom < 0));
+		this->numerator = abs(num);
+		this->denominator = abs(denom);
+		this->whole = abs(wh);
+	}
+	fraction(const int num, const int denom, const int wh = 0) {
+		if (denom == 0) {
+			throw std::invalid_argument(std::to_string(num) + " / " + std::to_string(denom) +
+				" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
-		else {
-			this->isPos = true;
-		}
+
+		this->isPos = !(wh < 0 || (num < 0 ^ denom < 0));
 		this->numerator = abs(num);
 		this->denominator = abs(denom);
 		this->whole = abs(wh);
 	}
 	fraction(const unsigned int num, const unsigned int denom, const unsigned int wh = 0) {
 		if (denom == 0) {
-			throw invalid_argument(to_string(num) + " / " + to_string(denom) +
+			throw std::invalid_argument(std::to_string(num) + " / " + std::to_string(denom) +
 				" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
 		this->isPos = true;
@@ -42,12 +48,13 @@ public:
 		this->whole = abs(wh);
 		this->numerator = 0;
 		this->denominator = 1;
-		if (wh < 0) {
-			this->isPos = false;
-		}
-		else {
-			this->isPos = true;
-		}
+		this->isPos = wh >= 0;
+	}
+	explicit fraction(const int wh) {
+		this->whole = abs(wh);
+		this->numerator = 0;
+		this->denominator = 1;
+		this->isPos = wh >= 0;
 	}
 	explicit fraction(const unsigned int wh) {
 		this->whole = wh;
@@ -64,20 +71,20 @@ public:
 
 	~fraction() = default;
 
-	[[nodiscard]] string toString() const {
+	[[nodiscard]] std::string toString() const {
 		if (this->numerator == 0) {
 			return (this->isPos? "" : "-") +
-				to_string(this->whole);
+				std::to_string(this->whole);
 		}
 		if (this->whole == 0) {
 			return (this->isPos? "" : "-") +
-				to_string(this->numerator) + "/" +
-				to_string(this->denominator);
+				std::to_string(this->numerator) + "/" +
+				std::to_string(this->denominator);
 		}
 		return (this->isPos? "" : "-") +
-			to_string(this->whole) + " " +
-			to_string(this->numerator) + "/" +
-			to_string(this->denominator);
+			std::to_string(this->whole) + " " +
+			std::to_string(this->numerator) + "/" +
+			std::to_string(this->denominator);
 	}
 
 	void setWhole(long int wh) {
@@ -100,7 +107,7 @@ public:
 	}
 	void setDenominator(long int denom) {
 		if (denom == 0) {
-			throw invalid_argument(to_string(this->numerator) + " / " + to_string(denom) +
+			throw std::invalid_argument(std::to_string(this->numerator) + " / " + std::to_string(denom) +
 				" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
 		this->denominator = denom;
@@ -114,7 +121,7 @@ public:
 
 	bool balanceDenominatorAs(long int balancenum) {
 		if (balancenum == 0) {
-			throw invalid_argument(to_string(this->numerator) + " / " + to_string(balancenum) +
+			throw std::invalid_argument(std::to_string(this->numerator) + " / " + std::to_string(balancenum) +
 	" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
 		if (this->denominator == balancenum) {
@@ -182,7 +189,7 @@ public:
 	}
 	bool balanceDenominatorAs(unsigned int balancenum) {
 		if (balancenum == 0) {
-			throw invalid_argument(to_string(this->numerator) + " / " + to_string(balancenum) +
+			throw std::invalid_argument(std::to_string(this->numerator) + " / " + std::to_string(balancenum) +
 	" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
 		if (this->denominator == balancenum) {
@@ -383,22 +390,25 @@ public:
 	}
 
 	void floor() {
-		this->proper();
-		this->numerator = 0;
+		this->numerator -= (this->numerator % this->denominator);
 	}
 	void round() {
-		this->proper();
-		if (this->numerator * 2 >= this->denominator) {
-			this->ceiling();
+		if (this->numerator % this->denominator == 0) {
+			return;
 		}
-		else {
-			this->floor();
+
+		if ((this->numerator % this->denominator) * 2 >= this->denominator) {
+			this->numerator += this->denominator;
 		}
+
+		this->numerator -= (this->numerator % this->denominator);
 	}
 	void ceiling() {
-		this->proper();
-		this->whole += (this->numerator == 0)? 0 : 1;
-		this->numerator = 0;
+		if (this->numerator % this->denominator == 0) {
+			return;
+		}
+		this->numerator -= (this->numerator % this->denominator);
+		this->numerator += this->denominator;
 	}
 
 	[[nodiscard]] bool isPositive() const {
@@ -485,7 +495,7 @@ public:
 			return;
 		}
 		unsigned int i = this->numerator < this->denominator? this->numerator : this->denominator;
-		i /= i % 2 == 0? 2 : 3;
+		i /= (i % 2 == 0? 2 : 3);
 		for (; i >= 2 ; i--) {
 			if (this->numerator % i == 0 && this->denominator % i == 0) {
 				this->numerator /= i;
@@ -505,9 +515,10 @@ public:
 		this->whole = 0;
 	}
 	void invert() {
-		this->improper();
-		unsigned int swapper = this->numerator;
-		this->numerator = this->denominator;
+		unsigned long long int swapper = this->denominator * this->whole;
+		swapper += this->numerator;
+		this->whole = this->denominator / swapper;
+		this->numerator = this->denominator % swapper;
 		this->denominator = swapper;
 	}
 
@@ -1536,17 +1547,17 @@ public:
 		f2->denominator = LCD;
 	}
 
-	friend istream& operator>>(istream& in, fraction& fract);
+	friend std::istream& operator>>(std::istream& in, fraction& fract);
 };
 
-inline istream& operator>>(istream& in, fraction& fract) {
+inline std::istream& operator>>(std::istream& in, fraction& fract) {
 	// intended functionality:
 	//		# &/% will read # into whole, & into numerator, % into denominator
 	//		# will read # into whole
 	//		&/% will read & into numerator, % into denominator
 	return in;
 }
-inline ostream& operator<<(ostream& out, const fraction& fract) {
+inline std::ostream& operator<<(std::ostream& out, const fraction& fract) {
 	return out << fract.toString();
 }
 
