@@ -418,10 +418,13 @@ public:
 		return !this->isPos;
 	}
 	[[nodiscard]] bool isReduced() const {
-		if (this->numerator == 0 || this->numerator == 1) {
+		if (this->numerator == 0 || this->numerator == 1 || this->denominator == 1) {
 			return true;
 		}
-		for (unsigned int i = 2; i <= ((this->numerator < this->denominator)? this->numerator : this->denominator)/2; i++) {
+		unsigned int upperbound = this->numerator < this->denominator? this->numerator : this->denominator;
+		upperbound /= (upperbound % 2 == 0? 2 : 3);
+
+		for (unsigned int i = 2; i <= upperbound; i++) {
 			if (this->numerator % i == 0 && this->denominator % i == 0) {
 				return false;
 			}
@@ -481,7 +484,7 @@ public:
 		this->isPos = !this->isPos;
 	}
 	void reduce() {
-		if (this->numerator == 0 || this->numerator == 1) {
+		if (this->numerator == 0 || this->numerator == 1 || this->denominator == 1) {
 			return;
 		}
 		if (this->numerator % this->denominator == 0) {
@@ -500,8 +503,6 @@ public:
 			if (this->numerator % i == 0 && this->denominator % i == 0) {
 				this->numerator /= i;
 				this->denominator /= i;
-			}
-			if (this->numerator == 1 || this->denominator == 1) {
 				return;
 			}
 		}
@@ -641,9 +642,7 @@ public:
 		return *this += copynum;
 	}
 	friend long int operator+=(long int integer, const fraction& addnum) {
-		long int * copynum = &integer;
-		*copynum += addnum.floored();
-		return *copynum;
+		return integer + addnum.floored();
 	}
 	fraction operator+(const long int& addnum) const {
 		fraction result(*this);
@@ -693,9 +692,7 @@ public:
 		return * this += copynum;
 	}
 	friend unsigned int operator+=(unsigned int integer, const fraction& addnum) {
-		unsigned int * copynum = &integer;
-		*copynum += addnum.floored();
-		return *copynum;
+		return integer + addnum.floored();
 	}
 	fraction operator+(const unsigned int& addnum) const {
 		fraction result(*this);
@@ -804,9 +801,11 @@ public:
 			return integer += subnum.asPositive();
 		}
 		if (integer >=0 && integer < subnum) {
-			return integer -= subnum.floored();
+			integer -= subnum.floored();
+			return integer;
 		}
-		return integer -= subnum.ceilinged();
+		integer -= subnum.ceilinged();
+		return integer;
 	}
 	fraction operator-(const long int& subnum) const {
 		fraction result(*this);
@@ -815,7 +814,7 @@ public:
 	}
 	friend fraction operator-(const long int integer, const fraction& subnum) {
 		if (!subnum.isPos) {
-			return integer - subnum.asPositive();
+			return integer + subnum.asPositive();
 		}
 		fraction result(integer);
 		result -= subnum;
@@ -934,13 +933,21 @@ public:
 		if (multnum < 0) {
 			this->isPos = !this->isPos;
 		}
-		int copynum = abs(multnum);
+		unsigned int copynum = abs(multnum);
 		this->whole *= copynum;
-		for (int i = 1; i <= (copynum / 2); i++) {
+
+		if (this->denominator % copynum == 0) {
+			this->denominator /= copynum;
+			return * this;
+		}
+		unsigned int i = copynum;
+		i /= (i % 2 == 0? 2 : 3);
+		for (; i >= 2; i--) {
 			if (copynum % i == 0) {
 				if (this->denominator % (copynum / i) == 0) {
-					this->denominator /= (copynum / i);
 					copynum /= i;
+					this->denominator /= copynum;
+					break;
 				}
 			}
 		}
@@ -961,11 +968,18 @@ public:
 	fraction operator*=(const unsigned int& multnum) {
 		unsigned int copynum = multnum;
 		this->whole *= copynum;
-		for (int i = 1; i <= (copynum / 2); i++) {
+		if (this->denominator % copynum == 0) {
+			this->denominator /= copynum;
+			return * this;
+		}
+		unsigned int i = copynum;
+		i /= (i % 2 == 0? 2 : 3);
+		for (; i >= 2; i--) {
 			if (copynum % i == 0) {
 				if (this->denominator % (copynum / i) == 0) {
-					this->denominator /= (copynum / i);
 					copynum /= i;
+					this->denominator /= copynum;
+					break;
 				}
 			}
 		}
@@ -975,8 +989,7 @@ public:
 	friend unsigned int operator*=(unsigned int integer, const fraction& multnum) {
 		fraction fractioncopy(multnum);
 		fractioncopy *= integer;
-		integer = fractioncopy.floored();
-		return integer;
+		return fractioncopy.floored();
 	}
 	fraction operator*(const unsigned int& multnum) const {
 		fraction result(*this);
@@ -1057,16 +1070,26 @@ public:
 	}
 
 	fraction operator/=(const long int& divnum) {
-		this->improper();
+		unsigned long long int impnum = this->denominator * this->whole;
+		impnum += this->numerator;
+		this->whole = 0;
 		if (divnum < 0) {
 			this->isPos = !this->isPos;
 		}
 		int copynum = divnum;
-		for (int i = 1; i <= (copynum / 2); i++) {
+		if (impnum % copynum == 0) {
+			this->numerator = impnum / copynum;
+			return * this;
+		}
+
+		unsigned int i = copynum;
+		i /= (i % 2 == 0? 2 : 3);
+		for (; i >= 2; i--) {
 			if (copynum % i == 0) {
 				if (this->numerator % (copynum / i) == 0) {
-					this->numerator /= (copynum / i);
 					copynum /= i;
+					this->numerator /= copynum;
+					break;
 				}
 			}
 		}
@@ -1077,12 +1100,27 @@ public:
 		bool mismatch = integer > 0 != divnum.isPos;
 		integer = abs(integer);
 		fraction fractioncopy(divnum);
-		fractioncopy.improper();
-		for (int i = 1; i <= (integer / 2); i++) {
+		unsigned long long int impnum = fractioncopy.denominator * fractioncopy.whole;
+		impnum += fractioncopy.numerator;
+		fractioncopy.whole = 0;
+
+		if (impnum % integer == 0) {
+			fractioncopy.numerator /= integer;
+			integer = fractioncopy.floored();
+			if (mismatch) {
+				integer *= -1;
+			}
+			return integer;
+		}
+
+		unsigned int i = integer;
+		i /= (i % 2 == 0? 2 : 3);
+		for (; i >= 2; i--) {
 			if (integer % i == 0) {
-				if (fractioncopy.numerator % (integer / i) == 0) {
-					fractioncopy.numerator /= (integer / i);
+				if (impnum % (integer / i) == 0) {
 					integer /= i;
+					fractioncopy.numerator /= integer;
+					break;
 				}
 			}
 		}
@@ -1104,13 +1142,24 @@ public:
 		return result;
 	}
 	fraction operator/=(const unsigned int& divnum) {
-		this->improper();
+		unsigned long long int impnum = this->denominator * this->whole;
+		impnum += this->numerator;
+		this->whole = 0;
+
 		unsigned int copynum = divnum;
-		for (int i = 1; i <= (copynum / 2); i++) {
+		if (impnum % copynum == 0) {
+			this->numerator = impnum / copynum;
+			return * this;
+		}
+
+		unsigned int i = copynum;
+		i /= (i % 2 == 0? 2 : 3);
+		for (; i >= 2; i--) {
 			if (copynum % i == 0) {
-				if (this->numerator % (copynum / i) == 0) {
-					this->numerator /= (copynum / i);
+				if (impnum % (copynum / i) == 0) {
 					copynum /= i;
+					this->numerator = impnum / copynum;
+					break;
 				}
 			}
 		}
@@ -1119,19 +1168,28 @@ public:
 	}
 	friend unsigned int operator/=(unsigned int integer, const fraction& divnum) {
 		fraction fractioncopy(divnum);
-		unsigned int copynum(integer);
-		fractioncopy.improper();
-		for (int i = 1; i <= (integer / 2); i++) {
+		unsigned long long int impnum = fractioncopy.denominator * fractioncopy.whole;
+		impnum += fractioncopy.numerator;
+		fractioncopy.whole = 0;
+
+		if (impnum % integer == 0) {
+			fractioncopy.numerator /= integer;
+			return fractioncopy.floored();
+		}
+
+		unsigned int i = integer;
+		i /= (i % 2 == 0? 2 : 3);
+		for (; i >= 2; i--) {
 			if (integer % i == 0) {
 				if (fractioncopy.numerator % (integer / i) == 0) {
-					fractioncopy.numerator /= (integer / i);
 					integer /= i;
+					fractioncopy.numerator /= integer;
+					break;
 				}
 			}
 		}
 		fractioncopy.denominator *= integer;
-		copynum = fractioncopy.floored();
-		return copynum;
+		return fractioncopy.floored();
 	}
 	fraction operator/(const unsigned int& divnum) const {
 		fraction result(*this);
@@ -1187,9 +1245,13 @@ public:
 				i1 /= (i1 % 2 == 0? 2 : 3);
 				for (; i1 >= 2; i1--) {
 					// if the loop counter finds a common factor of both impnum and impdenom, divide them both
+					// mathamatically, if both a and b divide them evenly,
+					// i1 must have equaled a*b or higher at the start
+					// ergo, once a loop that can divide is executed, the others are functionally insignificant
 					if (impnum % i1 == 0 && impdenom % i1 == 0) {
 						impnum /= i1;
 						impdenom /= i1;
+						break;
 					}
 				}
 			}
@@ -1212,6 +1274,7 @@ public:
 					if (numeratorcopy % i2 == 0 && this->denominator % i2 == 0) {
 						numeratorcopy /= i2;
 						this->denominator /= i2;
+						break;
 					}
 				}
 			}
@@ -1236,8 +1299,6 @@ public:
 					if (impnum % i3 == 0 && this->denominator % i3 == 0) {
 						impnum /= i3;
 						this->denominator /= i3;
-					}
-					if (impnum == 1 || this->denominator == 1) {
 						break;
 					}
 				}
@@ -1260,8 +1321,6 @@ public:
 					if (numeratorcopy % i4 == 0 && impdenom % i4 == 0) {
 						numeratorcopy /= i4;
 						impdenom /= i4;
-					}
-					if (numeratorcopy == 1 || impdenom == 1) {
 						break;
 					}
 				}
@@ -1284,8 +1343,13 @@ public:
 	}
 
 	fraction operator%=(const long int& modnum) {
-		this->improper();
-		this->numerator %= (modnum * this->denominator);
+		this->isPos = true;
+		unsigned long long int impnum = this->denominator * this->whole;
+		impnum += this->numerator;
+		impnum %= (modnum * this->denominator);
+
+		this->whole = impnum / this->denominator;
+		this->numerator = impnum % this->denominator;
 		return * this;
 	}
 	friend long int operator%=(long int integer, const fraction& modnum) {
@@ -1306,8 +1370,13 @@ public:
 		return result;
 	}
 	fraction operator%=(const unsigned int& modnum) {
-		this->improper();
-		this->numerator %= (modnum * this->denominator);
+		this->isPos = true;
+		unsigned long long int impnum = this->denominator * this->whole;
+		impnum += this->numerator;
+		impnum %= (modnum * this->denominator);
+
+		this->whole = impnum / this->denominator;
+		this->numerator = impnum % this->denominator;
 		return * this;
 	}
 	friend unsigned int operator%=(unsigned int integer, const fraction& modnum) {
@@ -1552,9 +1621,8 @@ public:
 
 inline std::istream& operator>>(std::istream& in, fraction& fract) {
 	// intended functionality:
-	//		# &/% will read # into whole, & into numerator, % into denominator
-	//		# will read # into whole
-	//		&/% will read & into numerator, % into denominator
+	// read in formats N/D or W N/D
+	// fraction will be marked as negative if any number is preceded by a dash
 	return in;
 }
 inline std::ostream& operator<<(std::ostream& out, const fraction& fract) {
