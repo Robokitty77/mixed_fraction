@@ -20,14 +20,8 @@ jobs:
 
       - name: Download minifier script
         run: |
-          curl -sSL https://githubusercontent.com -o minifier.py
+          curl -sSL https://raw.githubusercontent.com/Scylardor/cminify/refs/heads/master/minifier.py -o minifier.py
           
-      - name: Convert script to Python 3
-        # github removed python2 (for reasonable reasons, as annoying as it is.) this is a translator thats needed so we can run this.
-        run: |
-          python -m docutils 2>/dev/null || true
-          2to3 -w minifier.py
-
       - name: Run python script
         run: python minifier.py fraction.h > fraction.min.h
 
