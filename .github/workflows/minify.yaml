@@ -9,13 +9,14 @@ jobs:
   run-minifier:
     runs-on: ubuntu-latest
     steps:
+        #4.2.2 or else it throws random warnings
       - name: Checkout code
-        uses: actions/checkout@v4
-
+        uses: actions/checkout@v4.2.2
+        #required to be 2.7 for compat reasons
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.4.0
         with:
-          python-version: '3.12' 
+          python-version: '2.7' 
 
       - name: Download minifier script
         run: |
