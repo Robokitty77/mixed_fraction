@@ -12,11 +12,11 @@ jobs:
         #4.2.2 or else it throws random warnings
       - name: Checkout code
         uses: actions/checkout@v4.2.2
-        #required to be 2.7 for compat reasons
+        
       - name: Set up Python
-        uses: actions/setup-python@v5.4.0
+        uses: actions/setup-python@v5
         with:
-          python-version: '2.7' 
+          python-version: '3.12' 
 
       - name: Download minifier script
         run: |
