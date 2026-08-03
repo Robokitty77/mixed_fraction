@@ -2,7 +2,6 @@ name: Run C++ Minifier Python Script
 
 on:
   release:
-    types: [published] 
 
 permissions:
   contents: write 
