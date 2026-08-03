@@ -2,7 +2,7 @@ name: Run C++ Minifier Python Script
 
 on:
   release:
-
+    types: [published]
 permissions:
   contents: write 
 
@@ -33,10 +33,10 @@ jobs:
           name: minified-header-file
           path: fraction.min.h
           
-      - name: Release
+      - name: Upload assets to release
         uses: softprops/action-gh-release@v3
-        if: github.ref_type == 'tag'
         with:
+          tag_name: ${{ github.event.release.tag_name }}
           files: |
-            fraction.min.h
             fraction.h
+            fraction.min.h
