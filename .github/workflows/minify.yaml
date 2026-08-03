@@ -30,3 +30,9 @@ jobs:
         with:
           name: minified-header-file
           path: fraction.min.h
+          
+      - name: Release
+        uses: softprops/action-gh-release@v3
+        with:
+          fraction.min.h
+          fraction.h
