@@ -34,5 +34,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
-          fraction.min.h
-          fraction.h
+          files: |
+            fraction.min.h
+            fraction.h
