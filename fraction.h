@@ -8,10 +8,10 @@
 
 class fraction {
 private:
-	unsigned int numerator, denominator, whole;
+	unsigned int numer, denom, who;
 	bool isPos;
 public:
-	explicit fraction() : numerator(0), denominator(1), whole(0), isPos(true) {};
+	explicit fraction() : numer(0), denom(1), who(0), isPos(true) {};
 	fraction(const long int num, const long int denom, const long int wh = 0) {
 		if (denom == 0) {
 			throw std::invalid_argument(std::to_string(num) + " / " + std::to_string(denom) +
@@ -19,9 +19,9 @@ public:
 		}
 
 		this->isPos = !(wh < 0 || (num < 0 ^ denom < 0));
-		this->numerator = abs(num);
-		this->denominator = abs(denom);
-		this->whole = abs(wh);
+		this->numer = abs(num);
+		this->denom = abs(denom);
+		this->who = abs(wh);
 	}
 	fraction(const int num, const int denom, const int wh = 0) {
 		if (denom == 0) {
@@ -30,9 +30,9 @@ public:
 		}
 
 		this->isPos = !(wh < 0 || (num < 0 ^ denom < 0));
-		this->numerator = abs(num);
-		this->denominator = abs(denom);
-		this->whole = abs(wh);
+		this->numer = abs(num);
+		this->denom = abs(denom);
+		this->who = abs(wh);
 	}
 	fraction(const unsigned int num, const unsigned int denom, const unsigned int wh = 0) {
 		if (denom == 0) {
@@ -40,375 +40,373 @@ public:
 				" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
 		this->isPos = true;
-		this->numerator = num;
-		this->denominator = denom;
-		this->whole = wh;
+		this->numer = num;
+		this->denom = denom;
+		this->who = wh;
 	}
 	explicit fraction(const long int wh) {
-		this->whole = abs(wh);
-		this->numerator = 0;
-		this->denominator = 1;
+		this->who = abs(wh);
+		this->numer = 0;
+		this->denom = 1;
 		this->isPos = wh >= 0;
 	}
 	explicit fraction(const int wh) {
-		this->whole = abs(wh);
-		this->numerator = 0;
-		this->denominator = 1;
+		this->who = abs(wh);
+		this->numer = 0;
+		this->denom = 1;
 		this->isPos = wh >= 0;
 	}
 	explicit fraction(const unsigned int wh) {
-		this->whole = wh;
-		this->numerator = 0;
-		this->denominator = 1;
+		this->who = wh;
+		this->numer = 0;
+		this->denom = 1;
 		this->isPos = true;
 	}
 	fraction(const fraction &other) {
-		this->numerator = other.numerator;
-		this->denominator = other.denominator;
-		this->whole = other.whole;
+		this->numer = other.numer;
+		this->denom = other.denom;
+		this->who = other.who;
 		this->isPos = other.isPos;
 	}
 
 	~fraction() = default;
 
 	[[nodiscard]] std::string toString() const {
-		if (this->numerator == 0) {
+		if (this->numer == 0) {
 			return (this->isPos? "" : "-") +
-				std::to_string(this->whole);
+				std::to_string(this->who);
 		}
-		if (this->whole == 0) {
+		if (this->who == 0) {
 			return (this->isPos? "" : "-") +
-				std::to_string(this->numerator) + "/" +
-				std::to_string(this->denominator);
+				std::to_string(this->numer) + "/" +
+				std::to_string(this->denom);
 		}
 		return (this->isPos? "" : "-") +
-			std::to_string(this->whole) + " " +
-			std::to_string(this->numerator) + "/" +
-			std::to_string(this->denominator);
+			std::to_string(this->who) + " " +
+			std::to_string(this->numer) + "/" +
+			std::to_string(this->denom);
 	}
 
 	void setWhole(long int wh) {
-		this->whole = wh;
-		if (wh < 0) {
-			this->isPos = false;
-		}
-		else {
-			this->isPos = true;
-		}
+		this->who = wh;
+		this->isPos = wh >= 0;
+	}
+	void setWhole(unsigned int wh) {
+		this->who = wh;
 	}
 	void setNumerator(long int num) {
-		this->numerator = num;
-		if (num < 0) {
-			this->isPos = false;
-		}
-		else {
-			this->isPos = true;
-		}
+		this->numer = num;
+		this->isPos = num >= 0;
 	}
-	void setDenominator(long int denom) {
-		if (denom == 0) {
-			throw std::invalid_argument(std::to_string(this->numerator) + " / " + std::to_string(denom) +
+	void setNumerator(unsigned int num) {
+		this->numer = num;
+	}
+	void setDenominator(long int denominator) {
+		if (denominator == 0) {
+			throw std::invalid_argument(std::to_string(this->numer) + " / " + std::to_string(denominator) +
 				" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
-		this->denominator = denom;
-		if (denom < 0) {
-			this->isPos = false;
+		this->denom = denominator;
+		this->isPos = denominator >= 0;
+	}
+	void setDenominator(unsigned int denominator) {
+		if (denominator == 0) {
+			throw std::invalid_argument(std::to_string(this->numer) + " / " + std::to_string(denominator) +
+				" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
-		else {
-			this->isPos = true;
-		}
+		this->denom = denominator;
 	}
 
 	bool balanceDenominatorAs(long int balancenum) {
 		if (balancenum == 0) {
-			throw std::invalid_argument(std::to_string(this->numerator) + " / " + std::to_string(balancenum) +
+			throw std::invalid_argument(std::to_string(this->numer) + " / " + std::to_string(balancenum) +
 	" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
-		if (this->denominator == balancenum) {
+		if (this->denom == balancenum) {
 			return true;
 		}
 		this->isPos = balancenum > 0;
 		balancenum = abs(balancenum);
-		if (this->numerator == 0) {
-			this->denominator = balancenum;
+		if (this->numer == 0) {
+			this->denom = balancenum;
 			return true;
 		}
-		if (balancenum % this->denominator == 0) {
-			this->numerator *= balancenum / this->denominator;
-			this->denominator = balancenum;
+		if (balancenum % this->denom == 0) {
+			this->numer *= balancenum / this->denom;
+			this->denom = balancenum;
 			return true;
 		}
-		if (this->denominator % balancenum == 0 && this->numerator % (this->denominator / balancenum) == 0) {
-			this->numerator /= this->denominator / balancenum;
-			this->denominator = balancenum;
+		if (this->denom % balancenum == 0 && this->numer % (this->denom / balancenum) == 0) {
+			this->numer /= this->denom / balancenum;
+			this->denom = balancenum;
 			return true;
 		}
 		fraction bsearch = *this;
-		bsearch.denominator = balancenum;
+		bsearch.denom = balancenum;
 		fraction lesserfrac = *this;
-		lesserfrac.denominator = balancenum;
+		lesserfrac.denom = balancenum;
 		fraction greaterfrac = *this;
-		greaterfrac.denominator = balancenum;
+		greaterfrac.denom = balancenum;
 
 		unsigned int upper, lower;
-		if (this->denominator > balancenum) {
-			upper = this->numerator;
-			lower = this->numerator /
-			((this->denominator > balancenum?
-				this->denominator / balancenum :
-				balancenum / this->denominator)
+		if (this->denom > balancenum) {
+			upper = this->numer;
+			lower = this->numer /
+			((this->denom > balancenum?
+				this->denom / balancenum :
+				balancenum / this->denom)
 			+ 1);
 		}
 		else {
-			lower = this->numerator;
-			upper = this->numerator *
-			((this->denominator > balancenum?
-				this->denominator / balancenum :
-				balancenum / this->denominator)
+			lower = this->numer;
+			upper = this->numer *
+			((this->denom > balancenum?
+				this->denom / balancenum :
+				balancenum / this->denom)
 			+ 1);
 		}
 
 		do {
-			lesserfrac.numerator = bsearch.numerator - 1;
-			greaterfrac.numerator = bsearch.numerator + 1;
+			lesserfrac.numer = bsearch.numer - 1;
+			greaterfrac.numer = bsearch.numer + 1;
 			if ((lesserfrac - *this).asPositive() > (bsearch - *this).asPositive()
 				&& (greaterfrac - *this).asPositive() > (bsearch - *this).asPositive()) {
 					break;
 			}
 			if ((lesserfrac - *this).asPositive() < (greaterfrac - *this).asPositive()) {
-				upper = bsearch.numerator;
-				bsearch = (bsearch.numerator + lower) / 2;
+				upper = bsearch.numer;
+				bsearch = (bsearch.numer + lower) / 2;
 			}
 			else {
-				lower = bsearch.numerator;
-				bsearch = (bsearch.numerator + upper) / 2;
+				lower = bsearch.numer;
+				bsearch = (bsearch.numer + upper) / 2;
 			}
 		} while (upper > lower);
-		this->numerator = bsearch.numerator;
+		this->numer = bsearch.numer;
 		return false;
 	}
 	bool balanceDenominatorAs(unsigned int balancenum) {
 		if (balancenum == 0) {
-			throw std::invalid_argument(std::to_string(this->numerator) + " / " + std::to_string(balancenum) +
+			throw std::invalid_argument(std::to_string(this->numer) + " / " + std::to_string(balancenum) +
 	" is not a valid fraction- \nDenominator value may not be zero\n");
 		}
-		if (this->denominator == balancenum) {
+		if (this->denom == balancenum) {
 			return true;
 		}
-		if (this->numerator == 0) {
-			this->denominator = balancenum;
+		if (this->numer == 0) {
+			this->denom = balancenum;
 			return true;
 		}
-		if (balancenum % this->denominator == 0) {
-			this->numerator *= balancenum / this->denominator;
-			this->denominator = balancenum;
+		if (balancenum % this->denom == 0) {
+			this->numer *= balancenum / this->denom;
+			this->denom = balancenum;
 			return true;
 		}
-		if (this->denominator % balancenum == 0 && this->numerator % (this->denominator / balancenum) == 0) {
-			this->numerator /= this->denominator / balancenum;
-			this->denominator = balancenum;
+		if (this->denom % balancenum == 0 && this->numer % (this->denom / balancenum) == 0) {
+			this->numer /= this->denom / balancenum;
+			this->denom = balancenum;
 			return true;
 		}
 		fraction bsearch = *this;
-		bsearch.denominator = balancenum;
+		bsearch.denom = balancenum;
 		fraction lesserfrac = *this;
-		lesserfrac.denominator = balancenum;
+		lesserfrac.denom = balancenum;
 		fraction greaterfrac = *this;
-		greaterfrac.denominator = balancenum;
+		greaterfrac.denom = balancenum;
 
 		unsigned int upper, lower;
-		if (this->denominator > balancenum) {
+		if (this->denom > balancenum) {
 			upper = balancenum;
-			lower = this->numerator /
-			((this->denominator > balancenum?
-				this->denominator / balancenum :
-				balancenum / this->denominator)
+			lower = this->numer /
+			((this->denom > balancenum?
+				this->denom / balancenum :
+				balancenum / this->denom)
 			+ 1);
 		}
 		else {
 			lower = balancenum;
-			upper = this->numerator *
-			((this->denominator > balancenum?
-				this->denominator / balancenum :
-				balancenum / this->denominator)
+			upper = this->numer *
+			((this->denom > balancenum?
+				this->denom / balancenum :
+				balancenum / this->denom)
 			+ 1);
 		}
 
 		do {
-			lesserfrac.numerator = bsearch.numerator - 1;
-			greaterfrac.numerator = bsearch.numerator + 1;
+			lesserfrac.numer = bsearch.numer - 1;
+			greaterfrac.numer = bsearch.numer + 1;
 			if ((lesserfrac - *this).asPositive() > (bsearch - *this).asPositive()
 				&& (greaterfrac - *this).asPositive() > (bsearch - *this).asPositive()) {
 					break;
 			}
 			if ((lesserfrac - *this).asPositive() < (greaterfrac - *this).asPositive()) {
-				upper = bsearch.numerator;
-				bsearch = (bsearch.numerator + lower) / 2;
+				upper = bsearch.numer;
+				bsearch = (bsearch.numer + lower) / 2;
 			}
 			else {
-				lower = bsearch.numerator;
-				bsearch = (bsearch.numerator + upper) / 2;
+				lower = bsearch.numer;
+				bsearch = (bsearch.numer + upper) / 2;
 			}
 		} while (upper > lower);
-		this->numerator = bsearch.numerator;
+		this->numer = bsearch.numer;
 		return false;
 	}
 	bool balanceNumeratorAs(long int balancenum) {
-		if (this->numerator == balancenum) {
+		if (this->numer == balancenum) {
 			return true;
 		}
-		if ((balancenum <= (this->whole * this->denominator) + this->numerator)
+		if ((balancenum <= (this->who * this->denom) + this->numer)
 			&& this->isPos == balancenum > 0) {
-			if (this->numerator % this->denominator == balancenum % this->denominator) {
-				if (balancenum > this->numerator) {
-					this->whole -= (balancenum - this->numerator) / this->denominator;
+			if (this->numer % this->denom == balancenum % this->denom) {
+				if (balancenum > this->numer) {
+					this->who -= (balancenum - this->numer) / this->denom;
 				}
 				else {
-					this->whole += (this->numerator - balancenum) / this->denominator;
+					this->who += (this->numer - balancenum) / this->denom;
 				}
-				this->numerator = balancenum;
+				this->numer = balancenum;
 				return true;
 			}
-			if (balancenum > this->numerator) {
-				this->whole -= (balancenum - this->numerator) / this->denominator + 1;
+			if (balancenum > this->numer) {
+				this->who -= (balancenum - this->numer) / this->denom + 1;
 			}
 			else {
-				this->whole += (this->numerator - balancenum) / this->denominator;
+				this->who += (this->numer - balancenum) / this->denom;
 			}
 			return false;
 		}
 		this->isPos = balancenum > 0;
-		this->numerator = abs(balancenum);
-		this->whole = 0;
+		this->numer = abs(balancenum);
+		this->who = 0;
 		return false;
 	}
 	bool balanceNumeratorAs(unsigned int balancenum) {
-		if (this->numerator == balancenum) {
+		if (this->numer == balancenum) {
 			return true;
 		}
-		if (balancenum <= (this->whole * this->denominator) + this->numerator) {
-			if (this->numerator % this->denominator == balancenum % this->denominator) {
-				if (balancenum > this->numerator) {
-					this->whole -= (balancenum - this->numerator) / this->denominator;
+		if (balancenum <= (this->who * this->denom) + this->numer) {
+			if (this->numer % this->denom == balancenum % this->denom) {
+				if (balancenum > this->numer) {
+					this->who -= (balancenum - this->numer) / this->denom;
 				}
 				else {
-					this->whole += (this->numerator - balancenum) / this->denominator;
+					this->who += (this->numer - balancenum) / this->denom;
 				}
-				this->numerator = balancenum;
+				this->numer = balancenum;
 				return true;
 			}
-			if (balancenum > this->numerator) {
-				this->whole -= (balancenum - this->numerator) / this->denominator + 1;
+			if (balancenum > this->numer) {
+				this->who -= (balancenum - this->numer) / this->denom + 1;
 			}
 			else {
-				this->whole += (this->numerator - balancenum) / this->denominator;
+				this->who += (this->numer - balancenum) / this->denom;
 			}
 			return false;
 	}
-		this->numerator = balancenum;
-		this->whole = 0;
+		this->numer = balancenum;
+		this->who = 0;
 		return false;
 	}
 	bool balanceWholeAs(long int balancenum) {
-		if (this->whole == balancenum) {
+		if (this->who == balancenum) {
 			return true;
 		}
-		if ((this->denominator * abs(balancenum) <= (this->whole * this->denominator) + this->numerator)
+		if ((this->denom * abs(balancenum) <= (this->who * this->denom) + this->numer)
 			&& (this->isPos == balancenum > 0)) {
-			if (this->whole < balancenum) {
-				this->numerator -= (balancenum - this->whole) * this->denominator;
+			if (this->who < balancenum) {
+				this->numer -= (balancenum - this->who) * this->denom;
 			}
 			else {
-				this->numerator += (this->whole - balancenum) * this->denominator;
+				this->numer += (this->who - balancenum) * this->denom;
 			}
-			this->whole = abs(balancenum);
+			this->who = abs(balancenum);
 			return true;
 			}
 		this->isPos = balancenum > 0;
-		this->whole = abs(balancenum);
-		this->numerator = 0;
+		this->who = abs(balancenum);
+		this->numer = 0;
 		return false;
 	}
 	bool balanceWholeAs(unsigned int balancenum) {
-		if (this->whole == balancenum) {
+		if (this->who == balancenum) {
 			return true;
 		}
-		if (this->denominator * balancenum <= (this->whole * this->denominator) + this->numerator) {
-			if (this->whole < balancenum) {
-				this->numerator -= (balancenum - this->whole) * this->denominator;
+		if (this->denom * balancenum <= (this->who * this->denom) + this->numer) {
+			if (this->who < balancenum) {
+				this->numer -= (balancenum - this->who) * this->denom;
 			}
 			else {
-				this->numerator += (this->whole - balancenum) * this->denominator;
+				this->numer += (this->who - balancenum) * this->denom;
 			}
-			this->whole = balancenum;
+			this->who = balancenum;
 			return true;
 		}
-		this->whole = balancenum;
-		this->numerator = 0;
+		this->who = balancenum;
+		this->numer = 0;
 		return false;
 	}
 
-	[[nodiscard]] long int getDenominator() const {
+	[[nodiscard]] long int denominator() const {
 		if (this->isPos) {
-			return (long)this->denominator;
+			return (long)this->denom;
 		}
-		return (long)this->denominator * -1;
+		return (long)this->denom * -1;
 	}
-	[[nodiscard]] long int getNumerator() const {
+	[[nodiscard]] long int numerator() const {
 		if (this->isPos) {
-			return (long)this->numerator;
+			return (long)this->numer;
 		}
-		return (long)this->numerator * -1;
+		return (long)this->numer * -1;
 	}
-	[[nodiscard]] long int getWhole() const {
+	[[nodiscard]] long int whole() const {
 		if (this->isPos) {
-			return (long)this->whole;
+			return (long)this->who;
 		}
-		return (long)this->whole * -1;
+		return (long)this->who * -1;
 	}
-	[[nodiscard]] long int getProperNumerator() const {
+	[[nodiscard]] long int properNumerator() const {
 		if (this->isPos) {
-			return (long)(this->numerator % this->denominator);
+			return (long)(this->numer % this->denom);
 		}
-		return (long)(this->numerator % this->denominator) * -1;
+		return (long)(this->numer % this->denom) * -1;
 	}
-	[[nodiscard]] long int getImproperNumerator() const {
+	[[nodiscard]] long int improperNumerator() const {
 		if (this->isPos) {
-			return (long)(this->numerator) + (long)(this->whole * this->denominator);
+			return (long)(this->numer) + (long)(this->who * this->denom);
 		}
-		return (long)(this->numerator) + (long)(this->whole * this->denominator) * -1;
+		return (long)(this->numer) + (long)(this->who * this->denom) * -1;
 	}
 
 	[[nodiscard]] long int floored() const {
-		return (long)(this->whole) + (long)(this->numerator / this->denominator);
+		return (long)(this->who) + (long)(this->numer / this->denom);
 	}
 	[[nodiscard]] long int rounded() const {
-		return ((this->numerator % this->denominator) * 2 >= this->denominator)? this->ceilinged() : this->floored();
+		return ((this->numer % this->denom) * 2 >= this->denom)? this->ceilinged() : this->floored();
 	}
 	[[nodiscard]] long int ceilinged() const {
-		return this->floored() + (((this->numerator % this->denominator) == 0)? 0: 1);
+		return this->floored() + (((this->numer % this->denom) == 0)? 0: 1);
 	}
 
 	void floor() {
-		this->numerator -= (this->numerator % this->denominator);
+		this->numer -= (this->numer % this->denom);
 	}
 	void round() {
-		if (this->numerator % this->denominator == 0) {
+		if (this->numer % this->denom == 0) {
 			return;
 		}
 
-		if ((this->numerator % this->denominator) * 2 >= this->denominator) {
-			this->numerator += this->denominator;
+		if ((this->numer % this->denom) * 2 >= this->denom) {
+			this->numer += this->denom;
 		}
 
-		this->numerator -= (this->numerator % this->denominator);
+		this->numer -= (this->numer % this->denom);
 	}
 	void ceiling() {
-		if (this->numerator % this->denominator == 0) {
+		if (this->numer % this->denom == 0) {
 			return;
 		}
-		this->numerator -= (this->numerator % this->denominator);
-		this->numerator += this->denominator;
+		this->numer -= (this->numer % this->denom);
+		this->numer += this->denom;
 	}
 
 	[[nodiscard]] bool isPositive() const {
@@ -418,26 +416,26 @@ public:
 		return !this->isPos;
 	}
 	[[nodiscard]] bool isReduced() const {
-		if (this->numerator == 0 || this->numerator == 1 || this->denominator == 1) {
+		if (this->numer == 0 || this->numer == 1 || this->denom == 1) {
 			return true;
 		}
-		unsigned int upperbound = this->numerator < this->denominator? this->numerator : this->denominator;
+		unsigned int upperbound = this->numer < this->denom? this->numer : this->denom;
 		upperbound /= (upperbound % 2 == 0? 2 : 3);
 
 		for (unsigned int i = 2; i <= upperbound; i++) {
-			if (this->numerator % i == 0 && this->denominator % i == 0) {
+			if (this->numer % i == 0 && this->denom % i == 0) {
 				return false;
 			}
 		}
 		return true;
 	}
 	[[nodiscard]] bool isProper() const {
-		return this->numerator < this->denominator;
-	} 
-	[[nodiscard]] bool isImproper() const {
-		return this->numerator > this->denominator; 
+		return this->numer < this->denom;
 	}
-	
+	[[nodiscard]] bool isImproper() const {
+		return this->numer > this->denom;
+	}
+
 	[[nodiscard]] fraction asPositive() const {
 		fraction newfrac = *this;
 		newfrac.isPos = true;
@@ -484,84 +482,84 @@ public:
 		this->isPos = !this->isPos;
 	}
 	void reduce() {
-		if (this->numerator == 0 || this->numerator == 1 || this->denominator == 1) {
+		if (this->numer == 0 || this->numer == 1 || this->denom == 1) {
 			return;
 		}
-		if (this->numerator % this->denominator == 0) {
-			this->numerator /= this->denominator;
-			this->denominator = 1;
+		if (this->numer % this->denom == 0) {
+			this->numer /= this->denom;
+			this->denom = 1;
 			return;
 		}
-		if (this->denominator % this->numerator == 0) {
-			this->denominator /= this->numerator;
-			this->numerator = 1;
+		if (this->denom % this->numer == 0) {
+			this->denom /= this->numer;
+			this->numer = 1;
 			return;
 		}
-		unsigned int i = this->numerator < this->denominator? this->numerator : this->denominator;
+		unsigned int i = this->numer < this->denom? this->numer : this->denom;
 		i /= (i % 2 == 0? 2 : 3);
 		for (; i >= 2 ; i--) {
-			if (this->numerator % i == 0 && this->denominator % i == 0) {
-				this->numerator /= i;
-				this->denominator /= i;
+			if (this->numer % i == 0 && this->denom % i == 0) {
+				this->numer /= i;
+				this->denom /= i;
 				return;
 			}
 		}
 	}
 	void proper() {
-		this->whole += this->numerator / this->denominator;
-		this->numerator %= this->denominator;
+		this->who += this->numer / this->denom;
+		this->numer %= this->denom;
 	}
 	void improper() {
-		this->numerator += this->denominator * this->whole;
-		this->whole = 0;
+		this->numer += this->denom * this->who;
+		this->who = 0;
 	}
 	void invert() {
-		unsigned long long int swapper = this->denominator * this->whole;
-		swapper += this->numerator;
-		this->whole = this->denominator / swapper;
-		this->numerator = this->denominator % swapper;
-		this->denominator = swapper;
+		unsigned long long int swapper = this->denom * this->who;
+		swapper += this->numer;
+		this->who = this->denom / swapper;
+		this->numer = this->denom % swapper;
+		this->denom = swapper;
 	}
 
 	fraction& operator=(const int& copynum) {
-		this->numerator = 0;
-		this->whole = abs(copynum);
+		this->numer = 0;
+		this->who = abs(copynum);
 		this->isPos = copynum >= 0;
 		return *this;
 	}
 	fraction& operator=(const unsigned int& copynum) {
-		this->numerator = 0;
-		this->whole = copynum;
+		this->numer = 0;
+		this->who = copynum;
 		this->isPos = true;
 		return *this;
 	}
 	fraction& operator=(const fraction& copynum) {
-		this->numerator = copynum.numerator;
-		this->denominator = copynum.denominator;
-		this->whole = copynum.whole;
+		this->numer = copynum.numer;
+		this->denom = copynum.denom;
+		this->who = copynum.who;
 		this->isPos = copynum.isPos;
 		return *this;
 	}
 
 	fraction operator++() {
 		if (this->isPos) {
-			if (this->whole != 0) {
-				this->whole++;
+			if (this->who != 0) {
+				this->who++;
 			}
 			else {
-				this->numerator += this->denominator;
+				this->numer += this->denom;
 			}
 		}
 		else {
-			if (this->whole == 0 && this->numerator < this->denominator) {
-				this->numerator = this->denominator - this->numerator;
+			if (this->who == 0 && this->numer < this->denom) {
+				this->numer = this->denom - this->numer;
 				this->isPos = true;
 			}
-			else if (this->numerator < this->denominator) {
-				this->whole--;
+			else if (this->numer < this->denom) {
+				this->who--;
 			}
 			else {
-				this->numerator -= this->denominator;
+				this->numer -= this->denom;
 			}
 		}
 		return * this;
@@ -574,23 +572,23 @@ public:
 
 	fraction operator--() {
 		if (!this->isPos) {
-			if (this->whole != 0) {
-				this->whole++;
+			if (this->who != 0) {
+				this->who++;
 			}
 			else {
-				this->numerator += this->denominator;
+				this->numer += this->denom;
 			}
 		}
 		else {
-			if (this->whole == 0 && this->numerator < this->denominator) {
-				this->numerator = this->denominator - this->numerator;
+			if (this->who == 0 && this->numer < this->denom) {
+				this->numer = this->denom - this->numer;
 				this->isPos = false;
 			}
-			else if (this->numerator < this->denominator) {
-				this->whole--;
+			else if (this->numer < this->denom) {
+				this->who--;
 			}
 			else {
-				this->numerator -= this->denominator;
+				this->numer -= this->denom;
 			}
 		}
 		return * this;
@@ -606,38 +604,38 @@ public:
 			return *this -= (addnum * -1);
 		}
 		if (this->isPos) {
-			if (this->whole == 0) {
-				this->numerator += (addnum * this->denominator);
+			if (this->who == 0) {
+				this->numer += (addnum * this->denom);
 				return * this;
 			}
-			this->whole += addnum;
+			this->who += addnum;
 			return * this;
 		}
 
-		if (this->whole == 0) {
-			if (addnum * this->denominator < this->numerator) {
-				this->numerator -= (addnum * this->denominator);
+		if (this->who == 0) {
+			if (addnum * this->denom < this->numer) {
+				this->numer -= (addnum * this->denom);
 				return * this;
 			}
 			this->isPos = true;
-			this->numerator = (addnum * this->denominator) - this->numerator;
+			this->numer = (addnum * this->denom) - this->numer;
 			return * this;
 		}
 
-		if (this->whole >= addnum) {
-			this->whole -= addnum;
-			this->isPos = this->whole == 0;
+		if (this->who >= addnum) {
+			this->who -= addnum;
+			this->isPos = this->who == 0;
 			return * this;
 		}
 
-		if (this->numerator >= addnum * this->denominator) {
-			this->numerator -= (addnum * this->denominator);
+		if (this->numer >= addnum * this->denom) {
+			this->numer -= (addnum * this->denom);
 			return * this;
 		}
 
 		long int copynum = addnum;
-		copynum -= (long)this->whole;
-		this->whole = 0;
+		copynum -= (long)this->who;
+		this->who = 0;
 
 		return *this += copynum;
 	}
@@ -656,38 +654,38 @@ public:
 	}
 	fraction operator+=(const unsigned int& addnum) {
 		if (this->isPos) {
-			if (this->whole == 0) {
-				this->numerator += (addnum * this->denominator);
+			if (this->who == 0) {
+				this->numer += (addnum * this->denom);
 				return * this;
 			}
-			this->whole += addnum;
+			this->who += addnum;
 			return * this;
 		}
 
-		if (this->whole == 0) {
-			if (addnum * this->denominator < this->numerator) {
-				this->numerator -= (addnum * this->denominator);
+		if (this->who == 0) {
+			if (addnum * this->denom < this->numer) {
+				this->numer -= (addnum * this->denom);
 				return * this;
 			}
 			this->isPos = true;
-			this->numerator = (addnum * this->denominator) - this->numerator;
+			this->numer = (addnum * this->denom) - this->numer;
 			return * this;
 		}
 
-		if (this->whole >= addnum) {
-			this->whole -= addnum;
-			this->isPos = this->whole == 0;
+		if (this->who >= addnum) {
+			this->who -= addnum;
+			this->isPos = this->who == 0;
 			return * this;
 		}
 
-		if (this->numerator >= addnum * this->denominator) {
-			this->numerator -= (addnum * this->denominator);
+		if (this->numer >= addnum * this->denom) {
+			this->numer -= (addnum * this->denom);
 			return * this;
 		}
 
 		unsigned int copynum = addnum;
-		copynum -= this->whole;
-		this->whole = 0;
+		copynum -= this->who;
+		this->who = 0;
 
 		return * this += copynum;
 	}
@@ -713,42 +711,62 @@ public:
 		LCD(this, &fractioncopy);
 
 		if (this->isPos) {
-			this->whole += fractioncopy.whole;
-			this->numerator += fractioncopy.numerator;
+			this->who += fractioncopy.who;
+			this->numer += fractioncopy.numer;
 			return * this;
 		}
 
-		fractioncopy.proper();
-		if (this->whole != 0 && fractioncopy.whole != 0) {
-			if (this->whole < fractioncopy.whole) {
-				fractioncopy.whole -= this->whole;
-				this->whole = 0;
-			}
-			else {
-				this->whole -= fractioncopy.whole;
-				fractioncopy.whole = 0;
-			}
-			if (this->whole == 0 && this->numerator == 0) {
-				this->isPos = true;
-				return *this += fractioncopy;
-			}
-		}
-
-		fractioncopy.improper();
-		if (this->numerator < fractioncopy.numerator) {
-			fractioncopy.numerator -= this->numerator;
-			this->numerator = 0;
-		}
-		else {
-			this->numerator -= fractioncopy.numerator;
-			fractioncopy.numerator = 0;
-		}
-
-		if (this->numerator == 0) {
+		// the approach for adding a positive number to a negative number
+		// changes based on a sign change is necessary or not
+		// if the two are equivalent, the net value will just be 0
+		if (*this == fractioncopy) {
+			this->who = 0;
+			this->numer = 0;
 			this->isPos = true;
-			this->numerator = fractioncopy.numerator;
+			return * this;
 		}
-		this->reduce();
+		// if this is smaller than the number being added to it, the sign bool will need to flip
+		// and the magnitude of the fraction afterwards will be fractioncopy - *this
+		if (*this < fractioncopy) {
+			this->isPos = true;
+			if (this->who < fractioncopy.who) {
+				fractioncopy.who -= this->who;
+				this->who = 0;
+				if (this->numer < fractioncopy.who * fractioncopy.denom) {
+					this->who = fractioncopy.who + (fractioncopy.numer / fractioncopy.denom);
+					this->numer = (fractioncopy.numer % fractioncopy.denom) - this->numer;
+					return * this;
+				}
+				this->numer -= fractioncopy.who * fractioncopy.denom;
+				this->numer = (fractioncopy.numer % fractioncopy.denom) - this->numer;
+				this->who = fractioncopy.numer / fractioncopy.denom;
+				return * this;
+			}
+
+			this->who -= fractioncopy.who;
+			// fractioncopy's value has to have started as being higher than *this'
+			// arriving here specifically means that its numerator is larger than *this'
+			fractioncopy.numer -= this->who * this->denom;
+			this->who = 0;
+			this->numer = fractioncopy.numer - this->numer;
+			return * this;
+		}
+
+		// if *this is larger than the number being added to it, the sign bool will not flip
+		// and the magnitude of the fraction afterwards will be *this - fractioncopy
+		if (this->who < fractioncopy.who) {
+			fractioncopy.who -= this->who;
+			this->who = 0;
+			this->numer -= fractioncopy.who * fractioncopy.denom;
+			this->numer -= fractioncopy.numer;
+			return * this;
+		}
+		this->who -= fractioncopy.who;
+		if (this->numer < fractioncopy.numer) {
+			this->who -= fractioncopy.numer / fractioncopy.denom;
+			fractioncopy.numer %= fractioncopy.denom;
+		}
+		this->numer -= fractioncopy.numer;
 		return * this;
 	}
 	fraction operator+(const fraction& addnum) const {
@@ -762,37 +780,37 @@ public:
 			return * this += (subnum * -1);
 		}
 		if (!this->isPos) {
-			if (this->whole == 0) {
-				this->numerator += (subnum * this->denominator);
+			if (this->who == 0) {
+				this->numer += (subnum * this->denom);
 				return * this;
 			}
-			this->whole += subnum;
+			this->who += subnum;
 			return * this;
 		}
 
-		if (this->whole == 0) {
-			if (subnum * this->denominator < this->numerator) {
-				this->numerator -= (subnum * this->denominator);
+		if (this->who == 0) {
+			if (subnum * this->denom < this->numer) {
+				this->numer -= (subnum * this->denom);
 				return * this;
 			}
 			this->isPos = false;
-			this->numerator = (subnum * this->denominator) - this->numerator;
+			this->numer = (subnum * this->denom) - this->numer;
 			return * this;
 		}
 
-		if (this->whole >= subnum) {
-			this->whole -= subnum;
+		if (this->who >= subnum) {
+			this->who -= subnum;
 			return * this;
 		}
 
-		if (this->numerator >= subnum * this->denominator) {
-			this->numerator -= (subnum * this->denominator);
+		if (this->numer >= subnum * this->denom) {
+			this->numer -= (subnum * this->denom);
 			return * this;
 		}
 
 		long int copynum = subnum;
-		copynum -= (long)this->whole;
-		this->whole = 0;
+		copynum -= (long)this->who;
+		this->who = 0;
 
 		return * this -= copynum;
 	}
@@ -822,37 +840,37 @@ public:
 	}
 	fraction operator-=(const unsigned int& subnum) {
 		if (!this->isPos) {
-			if (this->whole == 0) {
-				this->numerator += (subnum * this->denominator);
+			if (this->who == 0) {
+				this->numer += (subnum * this->denom);
 				return * this;
 			}
-			this->whole += subnum;
+			this->who += subnum;
 			return * this;
 		}
 
-		if (this->whole == 0) {
-			if (subnum * this->denominator < this->numerator) {
-				this->numerator -= (subnum * this->denominator);
+		if (this->who == 0) {
+			if (subnum * this->denom < this->numer) {
+				this->numer -= (subnum * this->denom);
 				return * this;
 			}
 			this->isPos = false;
-			this->numerator = (subnum * this->denominator) - this->numerator;
+			this->numer = (subnum * this->denom) - this->numer;
 			return * this;
 		}
 
-		if (this->whole >= subnum) {
-			this->whole -= subnum;
+		if (this->who >= subnum) {
+			this->who -= subnum;
 			return * this;
 		}
 
-		if (this->numerator >= subnum * this->denominator) {
-			this->numerator -= (subnum * this->denominator);
+		if (this->numer >= subnum * this->denom) {
+			this->numer -= (subnum * this->denom);
 			return * this;
 		}
 
 		unsigned int copynum = subnum;
-		copynum -= this->whole;
-		this->whole = 0;
+		copynum -= this->who;
+		this->who = 0;
 
 		return * this -= copynum;
 	}
@@ -885,42 +903,62 @@ public:
 		LCD(this, &fractioncopy);
 
 		if (!this->isPos) {
-			this->whole += fractioncopy.whole;
-			this->numerator += fractioncopy.numerator;
+			this->who += fractioncopy.who;
+			this->numer += fractioncopy.numer;
 			return * this;
 		}
 
-		fractioncopy.proper();
-		if (this->whole != 0 && fractioncopy.whole != 0) {
-			if (this->whole < fractioncopy.whole) {
-				fractioncopy.whole -= this->whole;
-				this->whole = 0;
-			}
-			else {
-				this->whole -= fractioncopy.whole;
-				fractioncopy.whole = 0;
-			}
-			if (this->whole == 0 && this->numerator == 0) {
-				this->isPos = false;
-				return *this += fractioncopy;
-			}
+		// the approach for subtracting a positive number from another positive number
+		// changes based on a sign change is necessary or not
+		// if the two are equivalent, the net value will just be 0
+		if (*this == fractioncopy) {
+			this->who = 0;
+			this->numer = 0;
+			this->isPos = true;
+			return * this;
 		}
-
-		fractioncopy.improper();
-		if (this->numerator < fractioncopy.numerator) {
-			fractioncopy.numerator -= this->numerator;
-			this->numerator = 0;
-		}
-		else {
-			this->numerator -= fractioncopy.numerator;
-			fractioncopy.numerator = 0;
-		}
-
-		if (this->numerator == 0) {
+		// if *this is smaller than the number being subtracted from it, the sign bool will need to flip
+		// and the magnitude of the fraction afterwards will be fractioncopy - *this
+		if (*this < fractioncopy) {
 			this->isPos = false;
-			this->numerator = fractioncopy.numerator;
+			if (this->who < fractioncopy.who) {
+				fractioncopy.who -= this->who;
+				this->who = 0;
+				if (this->numer < fractioncopy.who * fractioncopy.denom) {
+					this->who = fractioncopy.who + (fractioncopy.numer / fractioncopy.denom);
+					this->numer = (fractioncopy.numer % fractioncopy.denom) - this->numer;
+					return * this;
+				}
+				this->numer -= fractioncopy.who * fractioncopy.denom;
+				this->numer = (fractioncopy.numer % fractioncopy.denom) - this->numer;
+				this->who = fractioncopy.numer / fractioncopy.denom;
+				return * this;
+			}
+
+			this->who -= fractioncopy.who;
+			// fractioncopy's value has to have started as being higher than *this'
+			// arriving here specifically means that its numerator is larger than *this'
+			fractioncopy.numer -= this->who * this->denom;
+			this->who = 0;
+			this->numer = fractioncopy.numer - this->numer;
+			return * this;
 		}
-		this->reduce();
+
+		// if *this is larger than the number being subtracted from it, the sign bool will not flip
+		// and the magnitude of the fraction afterwards will be *this - fractioncopy
+		if (this->who < fractioncopy.who) {
+			fractioncopy.who -= this->who;
+			this->who = 0;
+			this->numer -= fractioncopy.who * fractioncopy.denom;
+			this->numer -= fractioncopy.numer;
+			return * this;
+		}
+		this->who -= fractioncopy.who;
+		if (this->numer < fractioncopy.numer) {
+			this->who -= fractioncopy.numer / fractioncopy.denom;
+			fractioncopy.numer %= fractioncopy.denom;
+		}
+		this->numer -= fractioncopy.numer;
 		return * this;
 	}
 	fraction operator-(const fraction& subnum) const {
@@ -934,24 +972,24 @@ public:
 			this->isPos = !this->isPos;
 		}
 		unsigned int copynum = abs(multnum);
-		this->whole *= copynum;
+		this->who *= copynum;
 
-		if (this->denominator % copynum == 0) {
-			this->denominator /= copynum;
+		if (this->denom % copynum == 0) {
+			this->denom /= copynum;
 			return * this;
 		}
 		unsigned int i = copynum;
 		i /= (i % 2 == 0? 2 : 3);
 		for (; i >= 2; i--) {
 			if (copynum % i == 0) {
-				if (this->denominator % (copynum / i) == 0) {
+				if (this->denom % (copynum / i) == 0) {
 					copynum /= i;
-					this->denominator /= copynum;
+					this->denom /= copynum;
 					break;
 				}
 			}
 		}
-		this->numerator *= copynum;
+		this->numer *= copynum;
 		return * this;
 	}
 	friend long int operator*=(long int integer, const fraction& multnum) {
@@ -967,23 +1005,23 @@ public:
 	}
 	fraction operator*=(const unsigned int& multnum) {
 		unsigned int copynum = multnum;
-		this->whole *= copynum;
-		if (this->denominator % copynum == 0) {
-			this->denominator /= copynum;
+		this->who *= copynum;
+		if (this->denom % copynum == 0) {
+			this->denom /= copynum;
 			return * this;
 		}
 		unsigned int i = copynum;
 		i /= (i % 2 == 0? 2 : 3);
 		for (; i >= 2; i--) {
 			if (copynum % i == 0) {
-				if (this->denominator % (copynum / i) == 0) {
+				if (this->denom % (copynum / i) == 0) {
 					copynum /= i;
-					this->denominator /= copynum;
+					this->denom /= copynum;
 					break;
 				}
 			}
 		}
-		this->numerator *= copynum;
+		this->numer *= copynum;
 		return * this;
 	}
 	friend unsigned int operator*=(unsigned int integer, const fraction& multnum) {
@@ -1003,51 +1041,51 @@ public:
 	}
 	fraction operator*=(const fraction& multnum) {
 		fraction copynum = multnum;
-		if (this->whole != 0) {
-			unsigned int wholestorage = this->whole;
-			this->whole = 0;
+		if (this->who != 0) {
+			unsigned int wholestorage = this->who;
+			this->who = 0;
 			return (wholestorage * copynum) + (*this * copynum);
 		}
-		if (copynum.whole != 0) {
-			unsigned int wholestorage = copynum.whole;
-			copynum.whole = 0;
+		if (copynum.who != 0) {
+			unsigned int wholestorage = copynum.who;
+			copynum.who = 0;
 			return (*this * wholestorage) + (*this * copynum);
 		}
 
-		if (this->numerator % copynum.denominator == 0) {
-			this->numerator /= copynum.denominator;
-			copynum.denominator = 1;
+		if (this->numer % copynum.denom == 0) {
+			this->numer /= copynum.denom;
+			copynum.denom = 1;
 		}
-		else if (copynum.denominator % this->numerator == 0) {
-			copynum.denominator /= this->numerator;
-			this->numerator = 1;
+		else if (copynum.denom % this->numer == 0) {
+			copynum.denom /= this->numer;
+			this->numer = 1;
 		}
 		else {
-			unsigned int i1 = (this->numerator < copynum.denominator? this->numerator : copynum.denominator);
+			unsigned int i1 = (this->numer < copynum.denom? this->numer : copynum.denom);
 			i1 /= (i1 % 2 == 0? 2 : 3);
 			for (; i1 >= 2; i1--) {
-				if (this->numerator % i1 == 0 && copynum.denominator % i1 == 0) {
-					this->numerator /= i1;
-					copynum.denominator /= i1;
+				if (this->numer % i1 == 0 && copynum.denom % i1 == 0) {
+					this->numer /= i1;
+					copynum.denom /= i1;
 				}
 			}
 		}
 
-		if (copynum.numerator % this->denominator == 0) {
-			copynum.numerator /= this->denominator;
-			this->denominator = 1;
+		if (copynum.numer % this->denom == 0) {
+			copynum.numer /= this->denom;
+			this->denom = 1;
 		}
-		else if (this->denominator % copynum.numerator == 0) {
-			this->denominator /= copynum.numerator;
-			copynum.numerator = 1;
+		else if (this->denom % copynum.numer == 0) {
+			this->denom /= copynum.numer;
+			copynum.numer = 1;
 		}
 		else {
-			unsigned int i2 = (copynum.numerator < this->denominator? copynum.numerator : this->denominator);
+			unsigned int i2 = (copynum.numer < this->denom? copynum.numer : this->denom);
 			i2 /= (i2 % 2 == 0? 2 : 3);
 			for (; i2 >= 2; i2--) {
-				if (copynum.numerator % i2 == 0 && this->denominator % i2 == 0) {
-					copynum.numerator /= i2;
-					this->denominator /= i2;
+				if (copynum.numer % i2 == 0 && this->denom % i2 == 0) {
+					copynum.numer /= i2;
+					this->denom /= i2;
 				}
 			}
 		}
@@ -1055,8 +1093,8 @@ public:
 		this->reduce();
 		copynum.reduce();
 
-		this->numerator *= copynum.numerator;
-		this->denominator *= copynum.denominator;
+		this->numer *= copynum.numer;
+		this->denom *= copynum.denom;
 
 		if (!multnum.isPos) {
 			this->isPos = !this->isPos;
@@ -1070,42 +1108,42 @@ public:
 	}
 
 	fraction operator/=(const long int& divnum) {
-		unsigned long long int impnum = this->denominator * this->whole;
-		impnum += this->numerator;
-		this->whole = 0;
+		unsigned long long int impnum = this->denom * this->who;
+		impnum += this->numer;
+		this->who = 0;
 		if (divnum < 0) {
 			this->isPos = !this->isPos;
 		}
 		int copynum = divnum;
 		if (impnum % copynum == 0) {
-			this->numerator = impnum / copynum;
+			this->numer = impnum / copynum;
 			return * this;
 		}
 
-		unsigned int i = copynum;
+		long int i = copynum;
 		i /= (i % 2 == 0? 2 : 3);
 		for (; i >= 2; i--) {
 			if (copynum % i == 0) {
-				if (this->numerator % (copynum / i) == 0) {
+				if (this->numer % (copynum / i) == 0) {
 					copynum /= i;
-					this->numerator /= copynum;
+					this->numer /= copynum;
 					break;
 				}
 			}
 		}
-		this->denominator *= copynum;
+		this->denom *= copynum;
 		return * this;
 	}
 	friend long int operator/=(long int integer, const fraction& divnum) {
 		bool mismatch = integer > 0 != divnum.isPos;
 		integer = abs(integer);
 		fraction fractioncopy(divnum);
-		unsigned long long int impnum = fractioncopy.denominator * fractioncopy.whole;
-		impnum += fractioncopy.numerator;
-		fractioncopy.whole = 0;
+		unsigned long long int impnum = fractioncopy.denom * fractioncopy.who;
+		impnum += fractioncopy.numer;
+		fractioncopy.who = 0;
 
 		if (impnum % integer == 0) {
-			fractioncopy.numerator /= integer;
+			fractioncopy.numer /= integer;
 			integer = fractioncopy.floored();
 			if (mismatch) {
 				integer *= -1;
@@ -1113,18 +1151,18 @@ public:
 			return integer;
 		}
 
-		unsigned int i = integer;
+		long int i = integer;
 		i /= (i % 2 == 0? 2 : 3);
 		for (; i >= 2; i--) {
 			if (integer % i == 0) {
 				if (impnum % (integer / i) == 0) {
 					integer /= i;
-					fractioncopy.numerator /= integer;
+					fractioncopy.numer /= integer;
 					break;
 				}
 			}
 		}
-		fractioncopy.denominator *= integer;
+		fractioncopy.denom *= integer;
 		integer = fractioncopy.floored();
 		if (mismatch) {
 			integer *= -1;
@@ -1142,13 +1180,13 @@ public:
 		return result;
 	}
 	fraction operator/=(const unsigned int& divnum) {
-		unsigned long long int impnum = this->denominator * this->whole;
-		impnum += this->numerator;
-		this->whole = 0;
+		unsigned long long int impnum = this->denom * this->who;
+		impnum += this->numer;
+		this->who = 0;
 
 		unsigned int copynum = divnum;
 		if (impnum % copynum == 0) {
-			this->numerator = impnum / copynum;
+			this->numer = impnum / copynum;
 			return * this;
 		}
 
@@ -1158,22 +1196,22 @@ public:
 			if (copynum % i == 0) {
 				if (impnum % (copynum / i) == 0) {
 					copynum /= i;
-					this->numerator = impnum / copynum;
+					this->numer = impnum / copynum;
 					break;
 				}
 			}
 		}
-		this->denominator *= copynum;
+		this->denom *= copynum;
 		return * this;
 	}
 	friend unsigned int operator/=(unsigned int integer, const fraction& divnum) {
 		fraction fractioncopy(divnum);
-		unsigned long long int impnum = fractioncopy.denominator * fractioncopy.whole;
-		impnum += fractioncopy.numerator;
-		fractioncopy.whole = 0;
+		unsigned long long int impnum = fractioncopy.denom * fractioncopy.who;
+		impnum += fractioncopy.numer;
+		fractioncopy.who = 0;
 
 		if (impnum % integer == 0) {
-			fractioncopy.numerator /= integer;
+			fractioncopy.numer /= integer;
 			return fractioncopy.floored();
 		}
 
@@ -1181,14 +1219,14 @@ public:
 		i /= (i % 2 == 0? 2 : 3);
 		for (; i >= 2; i--) {
 			if (integer % i == 0) {
-				if (fractioncopy.numerator % (integer / i) == 0) {
+				if (fractioncopy.numer % (integer / i) == 0) {
 					integer /= i;
-					fractioncopy.numerator /= integer;
+					fractioncopy.numer /= integer;
 					break;
 				}
 			}
 		}
-		fractioncopy.denominator *= integer;
+		fractioncopy.denom *= integer;
 		return fractioncopy.floored();
 	}
 	fraction operator/(const unsigned int& divnum) const {
@@ -1204,18 +1242,18 @@ public:
 	fraction operator/=(const fraction& divnum) {
 		// impnum, or improper numerator, is *(this)'s numerator in improper form
 		// it has been given a size of 64 bits to eliminate the risk of overflow on declaration
-		unsigned long long int impnum = this->denominator * this->whole;
+		unsigned long long int impnum = this->denom * this->who;
 		// it is still possible for this addition to overflow, though
-		impnum += this->numerator;
+		impnum += this->numer;
 		// impdenom, or improper denominator, follows the same logic but for divnum
 		// it's the "denominator" even though it uses the same formula
 		// to model fraction division being an inversion + multiplication
-		unsigned long long int impdenom = divnum.denominator * divnum.whole;
-		impdenom += divnum.numerator;
+		unsigned long long int impdenom = divnum.denom * divnum.who;
+		impdenom += divnum.numer;
 		// divnum's denominator needs to be editable, it is the numerator of the inverted fraction
-		unsigned int numeratorcopy = divnum.denominator;
+		unsigned int numeratorcopy = divnum.denom;
 		// impnum has already taken into account the value of this' whole portion
-		this->whole = 0;
+		this->who = 0;
 
 		// from here, the logic is nearly identical to that seen in fraction *= fraction with whole values of 0
 		// impnum replaces this->numerator
@@ -1259,21 +1297,21 @@ public:
 
 		// this is a repeat of the above logic but with the other cross pairing of numerator and denominator
 		if (numeratorcopy != 0 && numeratorcopy != 1) {
-			if (numeratorcopy % this->denominator == 0) {
-				numeratorcopy /= this->denominator;
-				this->denominator = 1;
+			if (numeratorcopy % this->denom == 0) {
+				numeratorcopy /= this->denom;
+				this->denom = 1;
 			}
-			else if (this->denominator % numeratorcopy == 0) {
-				this->denominator /= numeratorcopy;
+			else if (this->denom % numeratorcopy == 0) {
+				this->denom /= numeratorcopy;
 				numeratorcopy = 1;
 			}
 			else {
-				unsigned int i2 = (numeratorcopy < this->denominator? numeratorcopy : this->denominator);
+				unsigned int i2 = (numeratorcopy < this->denom? numeratorcopy : this->denom);
 				i2 /= (i2 % 2 == 0? 2 : 3);
 				for (; i2 >= 2; i2--) {
-					if (numeratorcopy % i2 == 0 && this->denominator % i2 == 0) {
+					if (numeratorcopy % i2 == 0 && this->denom % i2 == 0) {
 						numeratorcopy /= i2;
-						this->denominator /= i2;
+						this->denom /= i2;
 						break;
 					}
 				}
@@ -1284,21 +1322,21 @@ public:
 		// below is essentially the .reduce() method twice, but with slightly different logic
 		// to work on a discrete pair of variables and not an object
 		if (impnum != 0 && impnum != 1) {
-			if (impnum % this->denominator == 0) {
-				impnum /= this->denominator;
-				this->denominator = 1;
+			if (impnum % this->denom == 0) {
+				impnum /= this->denom;
+				this->denom = 1;
 			}
-			else if (this->denominator % impnum == 0) {
-				this->denominator /= impnum;
+			else if (this->denom % impnum == 0) {
+				this->denom /= impnum;
 				impnum = 1;
 			}
 			else {
-				unsigned int i3 = (impnum < this->denominator? impnum : this->denominator);
+				unsigned int i3 = (impnum < this->denom? impnum : this->denom);
 				i3 /= (i3 % 2 == 0? 2 : 3);
 				for (; i3 >= 2 ; i3--) {
-					if (impnum % i3 == 0 && this->denominator % i3 == 0) {
+					if (impnum % i3 == 0 && this->denom % i3 == 0) {
 						impnum /= i3;
-						this->denominator /= i3;
+						this->denom /= i3;
 						break;
 					}
 				}
@@ -1329,8 +1367,8 @@ public:
 
 		// after the above, the numbers are as low as conceivably possible
 		// in the future, this is where a check for overflow will go and an error possibly thrown
-		this->numerator = impnum * numeratorcopy;
-		this->denominator *= impdenom;
+		this->numer = impnum * numeratorcopy;
+		this->denom *= impdenom;
 		if (!divnum.isPos) {
 			this->isPos = !this->isPos;
 		}
@@ -1344,19 +1382,19 @@ public:
 
 	fraction operator%=(const long int& modnum) {
 		this->isPos = true;
-		unsigned long long int impnum = this->denominator * this->whole;
-		impnum += this->numerator;
-		impnum %= (modnum * this->denominator);
+		unsigned long long int impnum = this->denom * this->who;
+		impnum += this->numer;
+		impnum %= (modnum * this->denom);
 
-		this->whole = impnum / this->denominator;
-		this->numerator = impnum % this->denominator;
+		this->who = impnum / this->denom;
+		this->numer = impnum % this->denom;
 		return * this;
 	}
 	friend long int operator%=(long int integer, const fraction& modnum) {
 		integer = abs(integer);
-		integer *= (long)modnum.denominator;
-		integer %= (long)(modnum.numerator + (modnum.denominator * modnum.whole));
-		integer /= (long)modnum.denominator;
+		integer *= (long)modnum.denom;
+		integer %= (long)(modnum.numer + (modnum.denom * modnum.who));
+		integer /= (long)modnum.denom;
 		return integer;
 	}
 	fraction operator%(const long int& modnum) const {
@@ -1371,18 +1409,18 @@ public:
 	}
 	fraction operator%=(const unsigned int& modnum) {
 		this->isPos = true;
-		unsigned long long int impnum = this->denominator * this->whole;
-		impnum += this->numerator;
-		impnum %= (modnum * this->denominator);
+		unsigned long long int impnum = this->denom * this->who;
+		impnum += this->numer;
+		impnum %= (modnum * this->denom);
 
-		this->whole = impnum / this->denominator;
-		this->numerator = impnum % this->denominator;
+		this->who = impnum / this->denom;
+		this->numer = impnum % this->denom;
 		return * this;
 	}
 	friend unsigned int operator%=(unsigned int integer, const fraction& modnum) {
-		integer *= (long)modnum.denominator;
-		integer %= (long)(modnum.numerator + (modnum.denominator * modnum.whole));
-		integer /= (long)modnum.denominator;
+		integer *= (long)modnum.denom;
+		integer %= (long)(modnum.numer + (modnum.denom * modnum.who));
+		integer /= (long)modnum.denom;
 		return integer;
 	}
 	fraction operator%(const unsigned int& modnum) const {
@@ -1415,7 +1453,7 @@ public:
 		if (this->isPos && compnum < 0) {
 			return false;
 		}
-		return (this->numerator + this->whole * this->denominator < compnum * this->denominator)
+		return (this->numer + this->who * this->denom < compnum * this->denom)
 				^ (!this->isPos && compnum < 0);
 	}
 	friend bool operator<(const long int integer, const fraction& compnum) {
@@ -1425,20 +1463,20 @@ public:
 		if (!compnum.isPos && integer > 0) {
 			return false;
 		}
-		return (integer * compnum.denominator < compnum.numerator + (compnum.whole * compnum.denominator))
+		return (integer * compnum.denom < compnum.numer + (compnum.who * compnum.denom))
 				^ (!compnum.isPos && integer < 0);
 	}
 	bool operator<(const unsigned int& compnum) const {
 		if (!this->isPos) {
 			return true;
 		}
-		return this->numerator + this->whole * this->denominator < compnum * this->denominator;
+		return this->numer + this->who * this->denom < compnum * this->denom;
 	}
 	friend bool operator<(const unsigned int integer, const fraction& compnum) {
 		if (!compnum.isPos) {
 			return false;
 		}
-		return integer * compnum.denominator < compnum.numerator + compnum.whole * compnum.denominator;
+		return integer * compnum.denom < compnum.numer + compnum.who * compnum.denom;
 	}
 	bool operator<(const fraction& compnum) const {
 		if (!this->isPos && compnum.isPos) {
@@ -1447,8 +1485,8 @@ public:
 		if (this->isPos && !compnum.isPos) {
 			return false;
 		}
-		return ((this->numerator + (this->denominator * this->whole)) * compnum.denominator
-				< (compnum.numerator + (compnum.denominator * compnum.whole)) * this->denominator)
+		return ((this->numer + (this->denom * this->who)) * compnum.denom
+				< (compnum.numer + (compnum.denom * compnum.who)) * this->denom)
 				^ (!this->isPos && !compnum.isPos);
 	}
 
@@ -1475,7 +1513,7 @@ public:
 		if (!this->isPos && compnum > 0) {
 			return false;
 		}
-		return (this->numerator + this->whole * this->denominator > compnum * this->denominator)
+		return (this->numer + this->who * this->denom > compnum * this->denom)
 				^ (!this->isPos && compnum < 0);
 	}
 	friend bool operator>(const long int integer, const fraction& compnum) {
@@ -1485,20 +1523,20 @@ public:
 		if (compnum.isPos && integer < 0) {
 			return false;
 		}
-		return (integer * compnum.denominator > compnum.numerator + (compnum.whole * compnum.denominator))
+		return (integer * compnum.denom > compnum.numer + (compnum.who * compnum.denom))
 				^ (!compnum.isPos && integer < 0);
 	}
 	bool operator>(const unsigned int& compnum) const {
 		if (!this->isPos) {
 			return false;
 		}
-		return this->numerator + this->whole * this->denominator < compnum * this->denominator;
+		return this->numer + this->who * this->denom < compnum * this->denom;
 	}
 	friend bool operator>(const unsigned int integer, const fraction& compnum) {
 		if (!compnum.isPos) {
 			return true;
 		}
-		return integer * compnum.denominator > compnum.numerator + compnum.whole * compnum.denominator;
+		return integer * compnum.denom > compnum.numer + compnum.who * compnum.denom;
 	}
 	bool operator>(const fraction& compnum) const {
 		if (this->isPos && !compnum.isPos) {
@@ -1507,8 +1545,8 @@ public:
 		if (!this->isPos && compnum.isPos) {
 			return false;
 		}
-		return ((this->numerator + (this->denominator * this->whole)) * compnum.denominator
-				> (compnum.numerator + (compnum.denominator * compnum.whole)) * this->denominator)
+		return ((this->numer + (this->denom * this->who)) * compnum.denom
+				> (compnum.numer + (compnum.denom * compnum.who)) * this->denom)
 				^ (!this->isPos && !compnum.isPos);
 	}
 
@@ -1532,32 +1570,32 @@ public:
 		if (this->isPos != compnum > 0) {
 			return false;
 		}
-		return this->numerator + this->whole * this->denominator == compnum * this->denominator;
+		return this->numer + this->who * this->denom == compnum * this->denom;
 	}
 	friend bool operator==(const long int integer, const fraction& compnum) {
 		if (compnum.isPos != integer > 0) {
 			return false;
 		}
-		return compnum.numerator + compnum.whole * compnum.denominator == integer * compnum.denominator;
+		return compnum.numer + compnum.who * compnum.denom == integer * compnum.denom;
 	}
 	bool operator==(const unsigned int& compnum) const {
 		if (!this->isPos) {
 			return false;
 		}
-		return this->numerator + this->whole * this->denominator == compnum * this->denominator;
+		return this->numer + this->who * this->denom == compnum * this->denom;
 	}
 	friend bool operator==(const unsigned int integer, const fraction& compnum) {
 		if (!compnum.isPos) {
 			return false;
 		}
-		return compnum.numerator + compnum.whole * compnum.denominator == integer * compnum.denominator;
+		return compnum.numer + compnum.who * compnum.denom == integer * compnum.denom;
 	}
 	bool operator==(const fraction& compnum) const {
 		if (this->isPos != compnum.isPos) {
 			return false;
 		}
-		return (this->numerator + (this->denominator * this->whole)) * compnum.denominator
-			== (compnum.numerator + (compnum.denominator * compnum.whole)) * this->denominator;
+		return (this->numer + (this->denom * this->who)) * compnum.denom
+			== (compnum.numer + (compnum.denom * compnum.who)) * this->denom;
 	}
 
 	bool operator!=(const long int& compnum) const {
@@ -1583,37 +1621,37 @@ public:
 		return this->floored();
 	}
 	explicit operator bool() const {
-		return this->numerator != 0 || this->whole != 0;
+		return this->numer != 0 || this->who != 0;
 	}
 
 	friend void LCD(fraction * f1, fraction * f2) {
-		if (f1->denominator == f2->denominator) {
+		if (f1->denom == f2->denom) {
 			return;
 		}
 
 		f1->reduce();
 		f2->reduce();
-		unsigned int LCD = f1->denominator * f2->denominator;
-		if (f1->denominator % f2->denominator == 0) {
-			LCD = f1->denominator;
+		unsigned int LCD = f1->denom * f2->denom;
+		if (f1->denom % f2->denom == 0) {
+			LCD = f1->denom;
 		}
-		else if (f2->denominator % f1->denominator == 0) {
-			LCD = f2->denominator;
+		else if (f2->denom % f1->denom == 0) {
+			LCD = f2->denom;
 		}
 		else {
-			for (int i = 1; i <= f2->denominator; i++) {
-				if ((f1->denominator * i) % f2->denominator == 0 || f2->denominator % (f1->denominator * i) == 0) {
-					LCD = f1->denominator * i;
+			for (int i = 1; i <= f2->denom; i++) {
+				if ((f1->denom * i) % f2->denom == 0 || f2->denom % (f1->denom * i) == 0) {
+					LCD = f1->denom * i;
 					break;
 				}
 			}
 		}
 
-		f1->numerator *= (LCD / f1->denominator);
-		f2->numerator *= (LCD / f2->denominator);
+		f1->numer *= (LCD / f1->denom);
+		f2->numer *= (LCD / f2->denom);
 
-		f1->denominator = LCD;
-		f2->denominator = LCD;
+		f1->denom = LCD;
+		f2->denom = LCD;
 	}
 
 	friend std::istream& operator>>(std::istream& in, fraction& fract);
@@ -1628,5 +1666,6 @@ inline std::istream& operator>>(std::istream& in, fraction& fract) {
 inline std::ostream& operator<<(std::ostream& out, const fraction& fract) {
 	return out << fract.toString();
 }
+
 
 #endif //FRACTIONS_FRACTION_H
